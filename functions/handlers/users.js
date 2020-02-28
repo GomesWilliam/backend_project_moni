@@ -112,7 +112,17 @@ exports.signup = (req, res) => {
   exports.pcdsignup = (req, res) => {
       const newUser = {
         email: req.body.email,
-        ra: req.body.ra
+        ra: req.body.ra,
+        nome: req.body.nome,
+        sobrenome: req.body.sobrenome,
+        ano_ingresso: req.body.ano_ingresso,
+        campus: req.body.campus,
+        curso_base: req.body.curso_base,
+        curso_pos_bi: req.body.curso_pos_bi,
+        deficiencia: req.body.deficiencia,
+        situacao: req.body.situacao,
+        descricao_acompanhamento: req.body.descricao_acompanhamento,
+        statusPcd: req.body.statusPcd
       }
 
       const { valid, errors} = validateSignupPCDData(newUser);
@@ -130,21 +140,21 @@ exports.signup = (req, res) => {
           } else {
             const userCredentials = {
               ra: newUser.ra,
-              email: newUser.email
-              // createdAt: new Date().toISOString(),
-              // imageUrl: `https://firebasestorage.googleapis.com/v0/b/${
-              //   config.storageBucket
-              // }/o/${noImg}?alt=media`,
-              // nome: newUser.nome,
-              // sobrenome: newUser.sobrenome,
-              // ano_ingresso: newUser.ano_ingresso,
-              // campus: newUser.campus,
-              // curso_base: newUser.curso_base,
-              // curso_pos_bi: newUser.curso_pos_bi,
-              // deficiencia: newUser.deficiencia,
-              // situacao: newUser.situacao,
-              // descricao_acompanhamento: newUser.descricao_acompanhamento,
-              // statusPcd: newUser.statusPcd
+              email: newUser.email,
+              createdAt: new Date().toISOString(),
+              imageUrl: `https://firebasestorage.googleapis.com/v0/b/${
+                config.storageBucket
+              }/o/${noImg}?alt=media`,
+              nome: newUser.nome,
+              sobrenome: newUser.sobrenome,
+              ano_ingresso: newUser.ano_ingresso,
+              campus: newUser.campus,
+              curso_base: newUser.curso_base,
+              curso_pos_bi: newUser.curso_pos_bi,
+              deficiencia: newUser.deficiencia,
+              situacao: newUser.situacao,
+              descricao_acompanhamento: newUser.descricao_acompanhamento,
+              statusPcd: newUser.statusPcd
             };
             return db
             .doc(`/pcds/${newUser.ra}`)
