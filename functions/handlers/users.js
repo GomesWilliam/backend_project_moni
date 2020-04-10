@@ -1,4 +1,4 @@
-const { db } = require('../util/Admin');
+const { admin, db } = require('../util/Admin');
 const config = require('../util/config');
 const firebase = require('firebase');
 
@@ -60,7 +60,8 @@ exports.signup = (req, res) => {
           ano_ingresso: newUser.ano_ingresso,
           campus: newUser.campus,
           curso_base: newUser.curso_base,
-          curso_pos_bi: newUser.curso_pos_bi
+          curso_pos_bi: newUser.curso_pos_bi,
+          isAdmin: true
         };
         return db
         .doc(`/users/${newUser.ra}`)
@@ -79,6 +80,8 @@ exports.signup = (req, res) => {
       });
   };
 
+//login monitor
+
   exports.login = (req, res) => {
     const user = {
       email: req.body.email,
@@ -88,15 +91,31 @@ exports.signup = (req, res) => {
     const { valid, errors} = validateLoginData(user);
 
     if(!valid) return res.status(400).json(errors);
-
+    let id = '';
+    let tokenn = '';
     firebase
       .auth()
       .signInWithEmailAndPassword(user.email, user.password)
       .then(data => {
+        id = data.user.uid;
         return data.user.getIdToken();
       })
       .then(token => {
-        return res.json({token});
+        tokken = token;
+        //return res.status(201).json({tokenn});
+        return db.collection('users').where('email', '==', user.email).get();
+      })
+      .then((data) => {
+        let info = [];
+        data.forEach((doc) => {
+          info.push({
+            userId: doc.id,
+            nome: doc.data().nome,
+            isAdmin: doc.data().isAdmin,
+            all: doc.data()
+          });
+        });
+        return res.json({isAdmin: info[0].isAdmin, token: tokken});
       })
       .catch(err => {
         console.error(err);
@@ -109,6 +128,66 @@ exports.signup = (req, res) => {
       });
   };
 
+// Monitor get info
+exports.allInfoUser = (req, res) => {
+  db.collection('users')
+    .orderBy('nome', 'asc')
+    .get()
+    .then((data) => {
+      let info = [];
+      data.forEach((doc) => {
+        info.push({
+          userId: doc.id,
+          nome: doc.data().nome,
+          isAdmin: doc.data().isAdmin,
+          all: doc.data()
+        });
+      });
+      return res.json(info);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ error: err.code });
+    });
+};
+
+//User Info by email
+exports.emailinfo = (req, res) => {
+  const infoEmail = {
+    email: req.body.email
+  }
+  db.collection('users')
+    .where('email', '==', infoEmail.email)
+    .get()
+    .then((data) => {
+      let info = [];
+      data.forEach((doc) => {
+        info.push({
+          userId: doc.id,
+          nome: doc.data().nome,
+          isAdmin: doc.data().isAdmin,
+          all: doc.data()
+        });
+      });
+      return res.json(info);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ error: err.code });
+    });
+};
+
+
+
+
+
+
+
+
+
+
+
+// CREATE PCD INFO
   exports.pcdsignup = (req, res) => {
       const newUser = {
         email: req.body.email,
@@ -116,13 +195,13 @@ exports.signup = (req, res) => {
         nome: req.body.nome,
         sobrenome: req.body.sobrenome,
         ano_ingresso: req.body.ano_ingresso,
+        turno: req.body.turno,
         campus: req.body.campus,
         curso_base: req.body.curso_base,
         curso_pos_bi: req.body.curso_pos_bi,
         deficiencia: req.body.deficiencia,
         situacao: req.body.situacao,
-        descricao_acompanhamento: req.body.descricao_acompanhamento,
-        statusPcd: req.body.statusPcd
+        descricao_acompanhamento: req.body.descricao_acompanhamento
       }
 
       const { valid, errors} = validateSignupPCDData(newUser);
@@ -148,13 +227,14 @@ exports.signup = (req, res) => {
               nome: newUser.nome,
               sobrenome: newUser.sobrenome,
               ano_ingresso: newUser.ano_ingresso,
+              turno: newUser.turno,
               campus: newUser.campus,
               curso_base: newUser.curso_base,
               curso_pos_bi: newUser.curso_pos_bi,
               deficiencia: newUser.deficiencia,
               situacao: newUser.situacao,
               descricao_acompanhamento: newUser.descricao_acompanhamento,
-              statusPcd: newUser.statusPcd
+              statusPcd: 'pcd'
             };
             return db
             .doc(`/pcds/${newUser.ra}`)
@@ -170,6 +250,7 @@ exports.signup = (req, res) => {
         });
     };
 
+//upload image
   exports.uploadImage = (req, res) => {
     const BusBoy = require('busboy');
     const path = require('path');

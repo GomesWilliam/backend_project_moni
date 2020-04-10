@@ -52,6 +52,41 @@ let disciplina_pcd = {
   acompanhamento: true or false,
 }
 
+const newinscricaoAdm = {
+  ra_pcd: req.body.ra_pcd,
+  materia: req.body.materia,
+  tipoAula: req.body.tipAula,
+  professor: req.body.professor,
+  turno: req.body.turno,
+  campus: req.body.campus,
+  diaSemana: req.body.diaSemana,
+  quinzenal: req.body.quinzenal,
+  horarioInicio: req.body.horarioInicio,
+  horarioFinal: req.body.horarioFinal,
+  quadAtual: req.body.quadAtual,
+  anoAtual: req.body.anoAtual,
+  cursoBase: req.body.cursoBase,
+  raAlunoAcompanhante: req.body.raAlunoAcompanhante
+}
+
+  const inscricaoAdm = {
+    ra_pcd: newinscricaoAdm.ra_pcd,
+    materia: newinscricaoAdm.materia,
+    tipoAula: newinscricaoAdm.tipAula,
+    professor: newinscricaoAdm.professor,
+    turno: newinscricaoAdm.turno,
+    campus: newinscricaoAdm.campus,
+    diaSemana: newinscricaoAdm.diaSemana,
+    quinzenal: newinscricaoAdm.quinzenal,
+    horarioInicio: newinscricaoAdm.horarioInicio,
+    horarioFinal: newinscricaoAdm.horarioFinal,
+    quadAtual: newinscricaoAdm.quadAtual,
+    anoAtual: newinscricaoAdm.anoAtual,
+    cursoBase: newinscricaoAdm.cursoBase,
+    raAlunoAcompanhante: newinscricaoAdm.raAlunoAcompanhante
+  }
+
+
 
 
 
